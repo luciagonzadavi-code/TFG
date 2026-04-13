@@ -5,6 +5,39 @@ import numpy as np
 #Lectura del CSV:
 listings = pd.read_csv('/Users/luciagonzalezdavila/Documents/4Âº/TFG/BBDD airbnb/listings.csv')
 
+#Exploraci—n inicial: 
+#Filas y columnas: 
+print("Filas y columnas iniciales:", listings.shape)
+
+#Tipos de variables: 
+print(listings.dtypes)
+
+#Exploraci—n de las variables numŽricas: 
+listings.describe()
+
+#Nulos:
+print(listings.isnull().sum().sort_values(ascending=False).head(20))
+
+#Visualizacion de las variables y valores nulos:
+null_counts = listings.isnull().sum().sort_values(ascending=False)
+plt.figure(figsize=(12,18))
+bars = plt.barh(null_counts.index[::-1], null_counts.values[::-1])
+for bar in bars:
+    width = bar.get_width()
+    plt.text(
+        width + max(null_counts) * 0.01,         
+        bar.get_y() + bar.get_height() / 2,
+        f"{int(width)}",
+        va="center",
+        fontsize=8
+    )
+plt.xlabel("Nœmero de valores nulos")
+plt.ylabel("Variables")
+plt.title("Variables iniciales y valores nulos")
+plt.grid(axis="x", alpha=0.3)
+plt.tight_layout()
+plt.show()
+
 #Carga de las columnas:
 cols = [
     "id",
@@ -43,6 +76,7 @@ print(len(listings.columns))
 #REORGANIZACIÃ“N: 
 #Filtrar columnas para que solo se quede con las que he mencionado: 
 listings = listings[cols]
+listings.describe 
 #Renombrar columnas: 
 listings = listings.rename(columns={"id": "listing_id"})
 
@@ -134,7 +168,35 @@ plt.ylabel("Frecuencia")
 plt.legend()
 plt.show()
 
+#Gr‡fico de nulos tras limpieza: 
+#1¼comporbar nulos: 
+null_counts_final = listings.isnull().sum()
+null_counts_final = null_counts_final[null_counts_final > 0].sort_values(ascending=False)
+print("Valores nulos tras la limpieza:")
+print(null_counts_final)
 
+#2¼Visualizaci—n: 
+if len(null_counts_final) > 0:
+    plt.figure(figsize=(10,6))
+    bars = plt.barh(null_counts_final.index[::-1], null_counts_final.values[::-1])
+    for bar in bars:
+        width = bar.get_width()
+        plt.text(
+            width + max(null_counts_final) * 0.01,
+            bar.get_y() + bar.get_height()/2,
+            f"{int(width)}",
+            va="center",
+            fontsize=9
+        )
+    plt.xlabel("Nœmero de valores nulos")
+    plt.ylabel("Variables")
+    plt.title("Valores nulos tras la limpieza")
+    plt.grid(axis="x", alpha=0.3)
+    plt.tight_layout()
+    plt.show()
+else:
+    print("No quedan valores nulos en el dataset final.")
+    
 
 #COMPROBACIONES: 
 #EstadÃ­sticos de las variables:   
@@ -361,6 +423,35 @@ plt.xlabel("Residuos")
 plt.ylabel("Frecuencia")
 plt.show()
 
+# Importancia aproximada de variables:
+coefs = model_price.params.copy()
+# Filtrado de variables principales:
+variables_clave = [
+    "accommodates",
+    "bedrooms",
+    "amenities_count",
+    "has_wifi",
+    "review_scores_rating",
+    "host_is_superhost",
+    "C(room_type)[T.Private room]",
+    "C(room_type)[T.Shared room]",
+    "C(room_type)[T.Hotel room]"
+]
+coefs_filtrados = coefs[coefs.index.isin(variables_clave)].sort_values()
+plt.figure(figsize=(9, 5))
+bars = plt.barh(coefs_filtrados.index, coefs_filtrados.values)
+for bar in bars:
+    width = bar.get_width()
+    plt.text(
+        width + (1 if width >= 0 else -6),    
+        bar.get_y() + bar.get_height()/2,
+        f"{width:.1f}",
+        va="center"
+    )
+plt.xlabel("Impacto estimado sobre el precio (Û)")
+plt.title("Variables m‡s influyentes en el precio")
+plt.grid(axis="x", alpha=0.3)
+plt.show()
 
 #MODELO 2 â€” OCUPACIÃ“N (LOG PRECIO): 
 #Evitar problemas con log(0) y hacer una copia:
