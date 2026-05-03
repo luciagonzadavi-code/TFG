@@ -4,6 +4,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import pickle
+import requests
 
 
 #1.Texto de la aplicación:
@@ -12,8 +13,12 @@ st.title("Simulador de Precio Óptimo - Airbnb Madrid")
 st.markdown("Herramienta de apoyo a la decisión basada en modelos econométricos.")
 
 #2.Carga del modelo:
-with open("model_occ_entire_log.pkl", "rb") as f:
-    model_occ_entire_log = pickle.load(f)
+@st.cache_resource
+def load_model ():
+    url = "https://drive.google.com/uc?id=1xG_AsfpgGYUV977EDECXyDq37kN-ZY6U"
+    response = requests.get(url)
+    return pickle.loads(response.content)
+model_occ_entire_log = load_model()
 
 #3.Definición de filtros:
 st.sidebar.header("Características del alojamiento")
