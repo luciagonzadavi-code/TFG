@@ -10,6 +10,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
 import pickle
+import requests
+import io
 
 # ── 1. CONFIGURACIÓN ───────────────────────────────────────────────────────
 st.set_page_config(
