@@ -38,11 +38,11 @@ st.markdown(f"""
 
 # ── 3. CARGA DEL MODELO ────────────────────────────────────────────────────
 @st.cache_resource
-def load_model ():
-    url = "https://drive.google.com/uc?id=1xG_AsfpgGYUV977EDECXyDq37kN-ZY6U"
+def load_model():
+    import io
+    url = "https://drive.google.com/uc?export=download&id=1xG_AsfpgGYUV977EDECXyDq37kN-ZY6U"
     response = requests.get(url)
-    return pickle.loads(response.content)
-model_occ_entire_log = load_model()
+    return pickle.load(io.BytesIO(response.content))
 
 # ── 4. DATOS DE REFERENCIA DEL MERCADO (de listings_enriched) ─────────────
 # Estadísticos reales por barrio calculados en el notebook
